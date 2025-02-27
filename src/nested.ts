@@ -7,7 +7,9 @@ import { publishQuestion } from "./objects";
  * that are `published`.
  */
 export function getPublishedQuestions(questions: Question[]): Question[] {
-    const publishedQuestions = questions.filter(({ published }) => published);
+    const publishedQuestions = questions.filter(
+        (question: Question): boolean => question.published,
+    );
     return publishedQuestions;
 }
 
@@ -18,8 +20,10 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
  */
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
     const nonEmpty = questions.filter(
-        ({ body, expected, options }) =>
-            body.trim() !== "" && expected !== "" && options.length < 1,
+        (question: Question): boolean =>
+            question.body !== "" &&
+            question.expected !== "" &&
+            question.options.length !== 0,
     );
     return nonEmpty;
 }
@@ -46,7 +50,10 @@ export function findQuestion(
  * with the given `id`.
  */
 export function removeQuestion(questions: Question[], id: number): Question[] {
-    return [];
+    const removedQuestion = questions.filter(
+        (question: Question): boolean => question.id !== id,
+    );
+    return removedQuestion;
 }
 
 /***
@@ -54,14 +61,22 @@ export function removeQuestion(questions: Question[], id: number): Question[] {
  * questions, as an array.
  */
 export function getNames(questions: Question[]): string[] {
-    return [];
+    const justNames = questions.map(
+        (question: Question): string => question.name,
+    );
+    return justNames;
 }
 
 /***
  * Consumes an array of questions and returns the sum total of all their points added together.
  */
 export function sumPoints(questions: Question[]): number {
-    return 0;
+    const totalPoints = questions.reduce(
+        (total: number, question: Question): number =>
+            (total += question.points),
+        0,
+    );
+    return totalPoints;
 }
 
 /***
