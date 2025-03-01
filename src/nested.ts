@@ -1,6 +1,6 @@
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
-import { publishQuestion } from "./objects";
+import { makeBlankQuestion, publishQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -21,8 +21,8 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
     const nonEmpty = questions.filter(
         (question: Question): boolean =>
-            question.body !== "" &&
-            question.expected !== "" &&
+            question.body !== "" ||
+            question.expected !== "" ||
             question.options.length !== 0,
     );
     return nonEmpty;
@@ -83,7 +83,12 @@ export function sumPoints(questions: Question[]): number {
  * Consumes an array of questions and returns the sum total of the PUBLISHED questions.
  */
 export function sumPublishedPoints(questions: Question[]): number {
-    return 0;
+    const totalPoints = questions.reduce(
+        (total: number, question: Question): number =>
+            question.published ? question.points + total : total + 0,
+        0,
+    );
+    return totalPoints;
 }
 
 /***
@@ -104,7 +109,14 @@ id,name,options,points,published
  * Check the unit tests for more examples!
  */
 export function toCSV(questions: Question[]): string {
-    return "";
+    const questionCSV = questions
+        .map(
+            (question: Question): string =>
+                // Convenient String Interpolation; could have just used + operator too
+                `\n${question.id},${question.name},${question.options.length},${question.points},${question.published}`,
+        )
+        .join("");
+    return "id,name,options,points,published" + questionCSV;
 }
 
 /**
@@ -121,7 +133,15 @@ export function makeAnswers(questions: Question[]): Answer[] {
  * each question is now published, regardless of its previous published status.
  */
 export function publishAll(questions: Question[]): Question[] {
-    return [];
+    const allPublished = questions.map(
+        (question: Question): Question =>
+            (question = {
+                ...question,
+                options: [...question.options],
+                published: (question.published = true),
+            }),
+    );
+    return allPublished;
 }
 
 /***
@@ -129,7 +149,19 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
-    return false;
+    if (questions[0].type === "multiple_choice_question") {
+        const multiQuestions = questions.filter(
+            (question: Question): boolean =>
+                question.type === "multiple_choice_question",
+        );
+        return multiQuestions.length === questions.length;
+    } else {
+        const writtenQuestions = questions.filter(
+            (question: Question): boolean =>
+                question.type === "short_answer_question",
+        );
+        return writtenQuestions.length === questions.length;
+    }
 }
 
 /***
@@ -143,7 +175,7 @@ export function addNewQuestion(
     name: string,
     type: QuestionType,
 ): Question[] {
-    return [];
+    return [...questions, makeBlankQuestion(id, name, type)];
 }
 
 /***
@@ -156,7 +188,18 @@ export function renameQuestionById(
     targetId: number,
     newName: string,
 ): Question[] {
-    return [];
+    const newQuestions = questions.map(
+        (question: Question): Question =>
+            question.id === targetId ?
+                {
+                    ...question,
+                    options: [...question.options],
+                    id: targetId,
+                    name: newName,
+                }
+            :   { ...question, options: [...question.options] },
+    );
+    return newQuestions;
 }
 
 /***
@@ -171,6 +214,12 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
+    const newQuestions = questions.map((question: Question): Question => {if(question.id === targetId){
+        question.type === "multiple_choice_question" ? {...question, options: [], type = } :
+    }
+    else{
+        question
+    }} );
     return [];
 }
 
