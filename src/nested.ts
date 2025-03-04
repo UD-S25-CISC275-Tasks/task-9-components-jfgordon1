@@ -125,7 +125,15 @@ export function toCSV(questions: Question[]): string {
  * making the `text` an empty string, and using false for both `submitted` and `correct`.
  */
 export function makeAnswers(questions: Question[]): Answer[] {
-    return [];
+    const answers = questions.map(
+        (question: Question): Answer => ({
+            questionId: question.id,
+            text: "",
+            submitted: false,
+            correct: false,
+        }),
+    );
+    return answers;
 }
 
 /***
@@ -138,7 +146,7 @@ export function publishAll(questions: Question[]): Question[] {
             (question = {
                 ...question,
                 options: [...question.options],
-                published: (question.published = true),
+                published: true,
             }),
     );
     return allPublished;
@@ -149,19 +157,11 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
-    if (questions[0].type === "multiple_choice_question") {
-        const multiQuestions = questions.filter(
-            (question: Question): boolean =>
-                question.type === "multiple_choice_question",
-        );
-        return multiQuestions.length === questions.length;
-    } else {
-        const writtenQuestions = questions.filter(
-            (question: Question): boolean =>
-                question.type === "short_answer_question",
-        );
-        return writtenQuestions.length === questions.length;
-    }
+    const allSameType = questions.every(
+        (question: Question): boolean => question.type === questions[0].type,
+    );
+
+    return allSameType;
 }
 
 /***
@@ -214,13 +214,19 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
-    const newQuestions = questions.map((question: Question): Question => {if(question.id === targetId){
-        question.type === "multiple_choice_question" ? {...question, options: [], type = } :
-    }
-    else{
-        question
-    }} );
-    return [];
+    const newQuestions = questions.map((question) =>
+        question.id === targetId ?
+            {
+                ...question,
+                type: newQuestionType,
+                options:
+                    newQuestionType === "multiple_choice_question" ?
+                        question.options
+                    :   [],
+            }
+        :   question,
+    );
+    return newQuestions;
 }
 
 /**
@@ -239,7 +245,25 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    return [];
+    const newQuestions = questions.map(
+        (question: Question): Question =>
+            question.id === targetId ?
+                {
+                    ...question,
+                    options:
+                        targetOptionIndex === -1 ?
+                            [...question.options, newOption]
+                        :   [
+                                ...question.options.slice(0, targetOptionIndex),
+                                newOption,
+                                ...question.options.slice(
+                                    targetOptionIndex + 1,
+                                ),
+                            ],
+                }
+            :   { ...question, options: [...question.options] },
+    );
+    return newQuestions;
 }
 
 /***
@@ -253,5 +277,18 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number,
 ): Question[] {
-    return [];
+    const newQuestions = questions.flatMap((question: Question) =>
+        question.id === targetId ?
+            [
+                { ...question, options: [...question.options] },
+                {
+                    ...question,
+                    name: "Copy of " + question.name,
+                    id: newId,
+                    options: [...question.options],
+                },
+            ]
+        :   [{ ...question }],
+    );
+    return newQuestions;
 }
