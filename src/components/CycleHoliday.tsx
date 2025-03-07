@@ -2,28 +2,43 @@ import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 
 export function CycleHoliday(): React.JSX.Element {
-    const HOLIDAYSALPHA = ["🎄", "🎃", "🏮", "🍀", "💘"];
-    const HOLIDAYSDATE = ["🏮", "💘", "🍀", "🎃", "🎄"];
-    const [holiday, setHoliday] = useState<string>(HOLIDAYSALPHA[0]);
-    const [isAlpha, setIsAlpha] = useState<boolean>(true);
+    enum Holiday {
+        Christmas = "🎄",
+        Halloween = "🎃",
+        LanternFestival = "🏮",
+        NewYear = "🎉",
+        StPatricksDay = "🍀"
+    }
 
-    function cycleHoliday(): void {
-        if (isAlpha) {
-            const index = HOLIDAYSALPHA.indexOf(holiday);
-            setHoliday(HOLIDAYSALPHA[(index + 1) % HOLIDAYSALPHA.length]);
-        } else {
-            const index = HOLIDAYSDATE.indexOf(holiday);
-            setHoliday(HOLIDAYSDATE[(index + 1) % HOLIDAYSDATE.length]);
-        }
+    const holidayOrders = {
+        alphabetical: [
+            Holiday.Christmas,
+            Holiday.Halloween,
+            Holiday.LanternFestival,
+            Holiday.NewYear,
+            Holiday.StPatricksDay
+        ],
+        byYear: [
+            Holiday.NewYear,
+            Holiday.LanternFestival,
+            Holiday.StPatricksDay,
+            Holiday.Halloween,
+            Holiday.Christmas
+        ]
+    };
+
+    const [holiday, setHoliday] = useState(holidayOrders.alphabetical[0]);
+
+    function cycleHoliday(current: Holiday, listOfDays: Holiday[]): void {
+        const index = listOfDays.indexOf(current);
+        setHoliday(listOfDays[(index + 1) % listOfDays.length]);
     }
     function toggleAlpha(): void {
-        setIsAlpha(true);
-        cycleHoliday();
+        cycleHoliday(holiday, holidayOrders.alphabetical);
     }
 
     function toggleDate(): void {
-        setIsAlpha(false);
-        cycleHoliday();
+        cycleHoliday(holiday, holidayOrders.byYear);
     }
 
     return (
