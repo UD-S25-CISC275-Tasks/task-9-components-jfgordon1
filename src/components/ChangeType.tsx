@@ -22,7 +22,7 @@ export function ChangeType(): React.JSX.Element {
                     changeType();
                 }}
             >
-                Change Question Type
+                Change Type
             </Button>
             <div>
                 {questionType === "multiple_choice_question"
