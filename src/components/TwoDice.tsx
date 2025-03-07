@@ -12,8 +12,8 @@ export function d6(): number {
 }
 
 export function TwoDice(): React.JSX.Element {
-    const [die1, setDie1] = useState(d6());
-    const [die2, setDie2] = useState(d6());
+    const [die1, setDie1] = useState(2);
+    const [die2, setDie2] = useState(6);
 
     function rollLeft() {
         setDie1(d6());
