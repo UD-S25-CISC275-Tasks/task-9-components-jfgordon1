@@ -45,7 +45,7 @@ export function StartAttempt(): React.JSX.Element {
             >
                 Mulligan
             </Button>
-            <div>Attempts Remaining: {attempts}</div>
+            <div>Trys Remaining: {attempts}</div>
         </div>
     );
 }
