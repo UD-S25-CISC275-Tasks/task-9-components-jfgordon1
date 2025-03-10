@@ -7,7 +7,7 @@ export function CycleHoliday(): React.JSX.Element {
         Halloween = "🎃",
         LanternFestival = "🏮",
         NewYear = "🎉",
-        StPatricksDay = "🍀"
+        StPatricksDay = "🍀",
     }
 
     const holidayOrders = {
@@ -16,15 +16,15 @@ export function CycleHoliday(): React.JSX.Element {
             Holiday.Halloween,
             Holiday.LanternFestival,
             Holiday.NewYear,
-            Holiday.StPatricksDay
+            Holiday.StPatricksDay,
         ],
         byYear: [
             Holiday.NewYear,
             Holiday.LanternFestival,
             Holiday.StPatricksDay,
             Holiday.Halloween,
-            Holiday.Christmas
-        ]
+            Holiday.Christmas,
+        ],
     };
 
     const [holiday, setHoliday] = useState(holidayOrders.alphabetical[0]);

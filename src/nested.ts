@@ -8,7 +8,7 @@ import { makeBlankQuestion } from "./objects";
  */
 export function getPublishedQuestions(questions: Question[]): Question[] {
     const publishedQuestions = questions.filter(
-        (question: Question): boolean => question.published
+        (question: Question): boolean => question.published,
     );
     return publishedQuestions;
 }
@@ -23,7 +23,7 @@ export function getNonEmptyQuestions(questions: Question[]): Question[] {
         (question: Question): boolean =>
             question.body !== "" ||
             question.expected !== "" ||
-            question.options.length !== 0
+            question.options.length !== 0,
     );
     return nonEmpty;
 }
@@ -34,10 +34,10 @@ export function getNonEmptyQuestions(questions: Question[]): Question[] {
  */
 export function findQuestion(
     questions: Question[],
-    id: number
+    id: number,
 ): Question | null {
     const foundQuestion = questions.find(
-        (question: Question): boolean => question.id === id
+        (question: Question): boolean => question.id === id,
     );
     if (foundQuestion) {
         return foundQuestion;
@@ -51,7 +51,7 @@ export function findQuestion(
  */
 export function removeQuestion(questions: Question[], id: number): Question[] {
     const removedQuestion = questions.filter(
-        (question: Question): boolean => question.id !== id
+        (question: Question): boolean => question.id !== id,
     );
     return removedQuestion;
 }
@@ -62,7 +62,7 @@ export function removeQuestion(questions: Question[], id: number): Question[] {
  */
 export function getNames(questions: Question[]): string[] {
     const justNames = questions.map(
-        (question: Question): string => question.name
+        (question: Question): string => question.name,
     );
     return justNames;
 }
@@ -74,7 +74,7 @@ export function sumPoints(questions: Question[]): number {
     const totalPoints = questions.reduce(
         (total: number, question: Question): number =>
             (total += question.points),
-        0
+        0,
     );
     return totalPoints;
 }
@@ -86,7 +86,7 @@ export function sumPublishedPoints(questions: Question[]): number {
     const totalPoints = questions.reduce(
         (total: number, question: Question): number =>
             question.published ? question.points + total : total + 0,
-        0
+        0,
     );
     return totalPoints;
 }
@@ -113,7 +113,7 @@ export function toCSV(questions: Question[]): string {
         .map(
             (question: Question): string =>
                 // Convenient String Interpolation; could have just used + operator too
-                `\n${question.id},${question.name},${question.options.length},${question.points},${question.published}`
+                `\n${question.id},${question.name},${question.options.length},${question.points},${question.published}`,
         )
         .join("");
     return "id,name,options,points,published" + questionCSV;
@@ -130,8 +130,8 @@ export function makeAnswers(questions: Question[]): Answer[] {
             questionId: question.id,
             text: "",
             submitted: false,
-            correct: false
-        })
+            correct: false,
+        }),
     );
     return answers;
 }
@@ -146,8 +146,8 @@ export function publishAll(questions: Question[]): Question[] {
             (question = {
                 ...question,
                 options: [...question.options],
-                published: true
-            })
+                published: true,
+            }),
     );
     return allPublished;
 }
@@ -158,7 +158,7 @@ export function publishAll(questions: Question[]): Question[] {
  */
 export function sameType(questions: Question[]): boolean {
     const allSameType = questions.every(
-        (question: Question): boolean => question.type === questions[0].type
+        (question: Question): boolean => question.type === questions[0].type,
     );
 
     return allSameType;
@@ -173,7 +173,7 @@ export function addNewQuestion(
     questions: Question[],
     id: number,
     name: string,
-    type: QuestionType
+    type: QuestionType,
 ): Question[] {
     return [...questions, makeBlankQuestion(id, name, type)];
 }
@@ -186,18 +186,18 @@ export function addNewQuestion(
 export function renameQuestionById(
     questions: Question[],
     targetId: number,
-    newName: string
+    newName: string,
 ): Question[] {
     const newQuestions = questions.map(
         (question: Question): Question =>
-            question.id === targetId
-                ? {
-                      ...question,
-                      options: [...question.options],
-                      id: targetId,
-                      name: newName
-                  }
-                : { ...question, options: [...question.options] }
+            question.id === targetId ?
+                {
+                    ...question,
+                    options: [...question.options],
+                    id: targetId,
+                    name: newName,
+                }
+            :   { ...question, options: [...question.options] },
     );
     return newQuestions;
 }
@@ -212,19 +212,19 @@ export function renameQuestionById(
 export function changeQuestionTypeById(
     questions: Question[],
     targetId: number,
-    newQuestionType: QuestionType
+    newQuestionType: QuestionType,
 ): Question[] {
     const newQuestions = questions.map((question) =>
-        question.id === targetId
-            ? {
-                  ...question,
-                  type: newQuestionType,
-                  options:
-                      newQuestionType === "multiple_choice_question"
-                          ? question.options
-                          : []
-              }
-            : question
+        question.id === targetId ?
+            {
+                ...question,
+                type: newQuestionType,
+                options:
+                    newQuestionType === "multiple_choice_question" ?
+                        question.options
+                    :   [],
+            }
+        :   question,
     );
     return newQuestions;
 }
@@ -243,28 +243,25 @@ export function editOption(
     questions: Question[],
     targetId: number,
     targetOptionIndex: number,
-    newOption: string
+    newOption: string,
 ): Question[] {
     const newQuestions = questions.map(
         (question: Question): Question =>
-            question.id === targetId
-                ? {
-                      ...question,
-                      options:
-                          targetOptionIndex === -1
-                              ? [...question.options, newOption]
-                              : [
-                                    ...question.options.slice(
-                                        0,
-                                        targetOptionIndex
-                                    ),
-                                    newOption,
-                                    ...question.options.slice(
-                                        targetOptionIndex + 1
-                                    )
-                                ]
-                  }
-                : { ...question, options: [...question.options] }
+            question.id === targetId ?
+                {
+                    ...question,
+                    options:
+                        targetOptionIndex === -1 ?
+                            [...question.options, newOption]
+                        :   [
+                                ...question.options.slice(0, targetOptionIndex),
+                                newOption,
+                                ...question.options.slice(
+                                    targetOptionIndex + 1,
+                                ),
+                            ],
+                }
+            :   { ...question, options: [...question.options] },
     );
     return newQuestions;
 }
@@ -278,20 +275,20 @@ export function editOption(
 export function duplicateQuestionInArray(
     questions: Question[],
     targetId: number,
-    newId: number
+    newId: number,
 ): Question[] {
     const newQuestions = questions.flatMap((question: Question) =>
-        question.id === targetId
-            ? [
-                  { ...question, options: [...question.options] },
-                  {
-                      ...question,
-                      name: "Copy of " + question.name,
-                      id: newId,
-                      options: [...question.options]
-                  }
-              ]
-            : [{ ...question }]
+        question.id === targetId ?
+            [
+                { ...question, options: [...question.options] },
+                {
+                    ...question,
+                    name: "Copy of " + question.name,
+                    id: newId,
+                    options: [...question.options],
+                },
+            ]
+        :   [{ ...question }],
     );
     return newQuestions;
 }
